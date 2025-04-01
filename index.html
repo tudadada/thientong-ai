@@ -43,7 +43,7 @@
       input.value = '';
 
       const payload = {
-        model: "gpt-3.5-turbo",
+        model: "asi1-mini",
         messages: [
           { role: "system", content: "Bạn là ThienTong, một AI hướng thiện, trò chuyện về tôn giáo, tâm linh, đạo lý bằng phong cách nhẹ nhàng, thấu hiểu." },
           { role: "user", content: userText }
@@ -63,6 +63,7 @@
         const aiReply = data.choices[0].message.content;
         addMessage(aiReply, 'ai');
       } catch (e) {
+        console.error(e);
         addMessage("Xin lỗi, hiện tại không kết nối được với AI.", 'ai');
       }
     }
