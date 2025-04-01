@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ThienTong - Trò chuyện về tôn giáo</title>
+  <style>
+    body { font-family: sans-serif; background: #fdfaf5; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
+    header { background: #795548; color: white; padding: 1rem; text-align: center; font-size: 1.5rem; }
+    #chat { flex: 1; padding: 1rem; overflow-y: auto; }
+    .message { margin: 0.5rem 0; padding: 0.5rem 1rem; border-radius: 1rem; max-width: 80%; }
+    .user { background: #cce5ff; align-self: flex-end; }
+    .ai { background: #e0c8b2; align-self: flex-start; }
+    #input-box { display: flex; padding: 1rem; background: #fff; border-top: 1px solid #ccc; }
+    #input { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 1rem; }
+    button { margin-left: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 1rem; background: #795548; color: white; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>ThienTong - AI trò chuyện về tôn giáo</header>
+  <div id="chat"></div>
+  <div id="input-box">
+    <input id="input" type="text" placeholder="Hãy hỏi về đạo, tôn giáo, thiền...">
+    <button onclick="sendMessage()">Gửi</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+
+    function addMessage(text, sender) {
+      const div = document.createElement('div');
+      div.className = 'message ' + sender;
+      div.innerText = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('input');
+      const userText = input.value.trim();
+      if (!userText) return;
+      addMessage(userText, 'user');
+      input.value = '';
+
+      const payload = {
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: "Bạn là ThienTong, một AI hướng thiện, trò chuyện về tôn giáo, tâm linh, đạo lý." },
+          { role: "user", content: userText }
+        ]
+      };
+
+      try {
+        const res = await fetch('https://api.asi1.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer **sk_4725b9c821ae4458beaaa8cf62060ad14a8a7afb3b734f99a2bf08b2393c013d**'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const aiReply = data.choices[0].message.content;
+        addMessage(aiReply, 'ai');
+      } catch (e) {
+        addMessage("Xin lỗi, hiện tại không kết nối được với AI.", 'ai');
+      }
+    }
+  </script>
+</body>
+</html>
